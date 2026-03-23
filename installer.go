@@ -44,7 +44,6 @@ func checkdatabase() {
 }
 
 func SearchCommand(package_name string) {
-	fmt.Println("Searching for", package_name)
 	checkdatabase()
 	data, err := os.ReadFile("index.json")
 	if err != nil {
@@ -54,8 +53,16 @@ func SearchCommand(package_name string) {
 	var index Index
 	json.Unmarshal(data, &index) // TODO : need to add error check here in case of a wrong json file
 
+	var iteration int
 	for _, pkg := range index.Packages {
-		if strings.Compare(pkg.Name, package_name) == 0 {
+		if strings.Contains(pkg.Name, package_name) {
+			iteration++
+		}
+	}
+
+	fmt.Println(iteration, "result found")
+	for _, pkg := range index.Packages {
+		if strings.Contains(pkg.Name, package_name) {
 			fmt.Println("---")
 			fmt.Printf("Name: %s\n", pkg.Name)
 			fmt.Printf("Description: %s\n", pkg.Description)
