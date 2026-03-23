@@ -1,0 +1,2 @@
+# gopack
+Go package manager
