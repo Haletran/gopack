@@ -8,3 +8,6 @@ describe({
 
 Download(url)
 Extract("/tmp/ffmpeg-N-123625-gfd9f1e9c52-linux64-gpl-shared.tar.xz", "/tmp/")
+Install("/tmp/ffmpeg-N-123625-gfd9f1e9c52-linux64-gpl-shared/bin/ffmpeg", "/usr/local/bin/ffmpeg")
+Install("/tmp/ffmpeg-N-123625-gfd9f1e9c52-linux64-gpl-shared/bin/ffplay", "/usr/local/bin/ffplay")
+Install("/tmp/ffmpeg-N-123625-gfd9f1e9c52-linux64-gpl-shared/bin/ffprobe", "/usr/local/bin/ffprobe")

@@ -1,15 +1,11 @@
 package main
 
 import (
-	"crypto/sha256"
-	"encoding/hex"
 	"fmt"
-	"io"
 	"log"
 	"os"
-	"strings"
-
 	"os/exec"
+	"strings"
 
 	"github.com/cavaliergopher/grab/v3"
 	lua "github.com/yuin/gopher-lua"
@@ -19,26 +15,6 @@ var PACKAGES_PATH string = "../packages"
 
 func findLuaFile(package_name string) string {
 	return fmt.Sprintf("%s/%s/%s.lua", PACKAGES_PATH, package_name, package_name)
-}
-
-func verifyChecksum(filePath string, expected string) error {
-	expected = strings.TrimPrefix(expected, "sha256:")
-	f, err := os.Open(filePath)
-	if err != nil {
-		return err
-	}
-	defer f.Close()
-
-	h := sha256.New()
-	if _, err := io.Copy(h, f); err != nil {
-		return err
-	}
-
-	actual := hex.EncodeToString(h.Sum(nil))
-	if actual != expected {
-		return fmt.Errorf("invalid checksum")
-	}
-	return nil
 }
 
 func Download(fileUrl string, checksum string) {
@@ -59,11 +35,8 @@ func Download(fileUrl string, checksum string) {
 }
 
 func Extract(source string, destination string) {
-	// if err := os.MkdirAll(destination, 0755); err != nil {
-	// 	log.Fatalf("[!] Could not create destination directory %s: %v", destination, err)
-	// }
-
 	var cmd *exec.Cmd
+	// TODO: should do a native solution instead of using the user shell
 	if strings.HasSuffix(source, ".zip") {
 		cmd = exec.Command("unzip", "-o", source, "-d", destination)
 	} else {
@@ -78,6 +51,7 @@ func Extract(source string, destination string) {
 }
 
 func Install(source string, destination string) {
+	// TODO: might need to make a much better solution than this shit
 	cmd := exec.Command("mv", source, destination)
 	err := cmd.Run()
 	if err != nil {
