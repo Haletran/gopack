@@ -14,7 +14,7 @@ func command_parser(command_args []string) {
 	}
 	switch command_args[1] {
 	case "install":
-		fmt.Println("Installing", command_args[2])
+		//InstallCommand(command_args[2])
 	case "uninstall":
 		fmt.Println("Uninstalling", command_args[2])
 	case "search":

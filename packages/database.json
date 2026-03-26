@@ -6,6 +6,13 @@
       "author": "bapasqui",
       "latest": "6.1",
       "versions": ["6.1"]
+    },
+    {
+      "name": "ffmpeg2",
+      "description": "Play, record and stream audio/video",
+      "author": "bapasqui",
+      "latest": "6.1",
+      "versions": ["6.1"]
     }
   ]
 }
