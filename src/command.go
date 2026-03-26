@@ -32,13 +32,14 @@ func getdatabase() Index {
 	return database
 }
 
-func searchdatabase(package_name string, database Index) bool {
+func searchdatabase(package_name string, database Index) int {
+	var iteration int
 	for _, pkg := range database.Packages {
 		if strings.Contains(pkg.Name, package_name) {
-			return true
+			iteration++
 		}
 	}
-	return false
+	return iteration
 }
 
 func printAlldatabase(database Index) {
@@ -61,10 +62,14 @@ func printsearchdb(package_name string, database Index) {
 func SearchCommand(package_name string) {
 	CheckDatabase()
 	var index Index = getdatabase()
-	if searchdatabase(package_name, index) == true {
+	if searchdatabase(package_name, index) >= 1 {
 		fmt.Println("[", package_name, "]", "found in the database")
 		printsearchdb(package_name, index)
 	} else {
 		fmt.Println(package_name, "not found")
 	}
+}
+
+func InstallCommand(package_name string) {
+	Download("https://ffmpeg.org/releases/ffmpeg-8.1.tar.xz")
 }

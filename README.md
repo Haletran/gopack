@@ -9,3 +9,8 @@ Package Manager made in Go
 - [ ] Install Command
 - [ ] Uninstall Command
 - [ ] Help Command
+
+
+### Source
+
+- https://golangdocs.com/golang-download-files
