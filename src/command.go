@@ -14,6 +14,7 @@ type Package struct {
 	Author      string
 	Latest      string
 	Versions    []string
+	Modes       []string
 }
 
 type Index struct {
@@ -71,5 +72,5 @@ func SearchCommand(package_name string) {
 }
 
 func InstallCommand(package_name string) {
-	Download("https://ffmpeg.org/releases/ffmpeg-8.1.tar.xz")
+	luaParser(package_name)
 }

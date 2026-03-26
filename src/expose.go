@@ -1,16 +1,134 @@
 package main
 
 import (
+	"crypto/sha256"
+	"encoding/hex"
 	"fmt"
+	"io"
 	"log"
+	"os"
+	"strings"
+
+	"os/exec"
 
 	"github.com/cavaliergopher/grab/v3"
+	lua "github.com/yuin/gopher-lua"
 )
 
-func Download(fileUrl string) {
+var PACKAGES_PATH string = "../packages"
+
+func findLuaFile(package_name string) string {
+	return fmt.Sprintf("%s/%s/%s.lua", PACKAGES_PATH, package_name, package_name)
+}
+
+func verifyChecksum(filePath string, expected string) error {
+	expected = strings.TrimPrefix(expected, "sha256:")
+	f, err := os.Open(filePath)
+	if err != nil {
+		return err
+	}
+	defer f.Close()
+
+	h := sha256.New()
+	if _, err := io.Copy(h, f); err != nil {
+		return err
+	}
+
+	actual := hex.EncodeToString(h.Sum(nil))
+	if actual != expected {
+		return fmt.Errorf("invalid checksum")
+	}
+	return nil
+}
+
+func Download(fileUrl string, checksum string) {
 	resp, err := grab.Get("/tmp", fileUrl)
 	if err != nil {
 		log.Fatal(err)
 	}
 	fmt.Println("Download saved to", resp.Filename)
+
+	if checksum != "" {
+		fmt.Println("--> Verifying checksum...")
+		if err := verifyChecksum(resp.Filename, checksum); err != nil {
+			os.Remove(resp.Filename)
+			log.Fatal(err)
+		}
+		fmt.Println("Checksum verified")
+	}
+}
+
+func Extract(source string, destination string) {
+	// if err := os.MkdirAll(destination, 0755); err != nil {
+	// 	log.Fatalf("[!] Could not create destination directory %s: %v", destination, err)
+	// }
+
+	var cmd *exec.Cmd
+	if strings.HasSuffix(source, ".zip") {
+		cmd = exec.Command("unzip", "-o", source, "-d", destination)
+	} else {
+		cmd = exec.Command("tar", "-xf", source, "-C", destination)
+	}
+	err := cmd.Run()
+
+	if err != nil {
+		log.Fatal(err)
+	}
+	fmt.Printf("Extracted %s to %s\n", source, destination)
+}
+
+func Install(source string, destination string) {
+	cmd := exec.Command("mv", source, destination)
+	err := cmd.Run()
+	if err != nil {
+		log.Fatal(err)
+	}
+	fmt.Printf("Sucessfully installed")
+	os.Remove(source)
+	// TODO : if successfull then keep track of it to not install it multiple times
+}
+
+func luaParser(package_name string) {
+	var filePath string = findLuaFile(package_name)
+	L := lua.NewState()
+	defer L.Close()
+
+	L.SetGlobal("describe", L.NewFunction(func(L *lua.LState) int {
+		tbl := L.CheckTable(1)
+		urlVal := tbl.RawGetString("url")
+		sha256Val := tbl.RawGetString("sha256")
+		L.SetGlobal("url", urlVal)
+		L.SetGlobal("sha256", sha256Val)
+		name := tbl.RawGetString("name")
+		version := tbl.RawGetString("version")
+		fmt.Printf("--> Package : %s version %s\n", name, version)
+		return 0
+	}))
+
+	L.SetGlobal("Extract", L.NewFunction(func(L *lua.LState) int {
+		source := L.CheckString(1)
+		destination := L.CheckString(2)
+		fmt.Printf("--> Extracting %s to %s\n", source, destination)
+		Extract(source, destination)
+		return 0
+	}))
+
+	L.SetGlobal("Install", L.NewFunction(func(L *lua.LState) int {
+		source := L.CheckString(1)
+		destination := L.CheckString(2)
+		fmt.Printf("--> Installing %s to %s\n", source, destination)
+		Install(source, destination)
+		return 0
+	}))
+
+	L.SetGlobal("Download", L.NewFunction(func(L *lua.LState) int {
+		url := L.CheckString(1)
+		checksum := L.OptString(2, "")
+		fmt.Println("--> Downloading from", url)
+		Download(url, checksum)
+		return 0
+	}))
+	if err := L.DoFile(filePath); err != nil {
+		panic(err)
+	}
 }
