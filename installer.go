@@ -22,17 +22,19 @@ type Index struct {
 	Packages []Package
 }
 
+var DATABASE_PATH string = "packages/database.json"
+
 func checkdatabase() {
-	_, err := os.Open("index.json")
+	_, err := os.Open(DATABASE_PATH)
 	if err != nil {
 		fmt.Println("Index not found, Downloading the list of all packages...")
 		// maybe consider having multiple sources of database instead of only one ?? or add possibility to change the source
-		resp, err := http.Get("https://raw.githubusercontent.com/Haletran/gopack/refs/heads/main/index.json?token=GHSAT0AAAAAADTS6R6DASPL3CESDOSRM4KI2OBLEWQ")
+		resp, err := http.Get("https://raw.githubusercontent.com/Haletran/gopack/refs/heads/main/database.json?token=GHSAT0AAAAAADTS6R6DASPL3CESDOSRM4KI2OBLEWQ")
 		if err != nil {
 			log.Fatal(err)
 		}
 		defer resp.Body.Close()
-		f, err := os.Create("index.json")
+		f, err := os.Create(DATABASE_PATH)
 		if err != nil {
 			log.Fatal(err)
 		}
@@ -45,7 +47,7 @@ func checkdatabase() {
 
 func SearchCommand(package_name string) {
 	checkdatabase()
-	data, err := os.ReadFile("index.json")
+	data, err := os.ReadFile(DATABASE_PATH)
 	if err != nil {
 		log.Fatal(err)
 	}
