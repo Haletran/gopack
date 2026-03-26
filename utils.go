@@ -13,7 +13,7 @@ func CheckDatabase() {
 	if err != nil {
 		fmt.Println("Index not found, Downloading the list of all packages...")
 		// maybe consider having multiple sources of database instead of only one ?? or add possibility to change the source
-		resp, err := http.Get("https://raw.githubusercontent.com/Haletran/gopack/refs/heads/main/database.json?token=GHSAT0AAAAAADTS6R6DASPL3CESDOSRM4KI2OBLEWQ")
+		resp, err := http.Get("https://raw.githubusercontent.com/Haletran/gopack/refs/heads/main/packages/database.json")
 		if err != nil {
 			log.Fatal(err)
 		}
