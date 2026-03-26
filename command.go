@@ -48,11 +48,14 @@ func printAlldatabase(database Index) {
 }
 
 func printsearchdb(package_name string, database Index) {
+	var nb_result int
 	for _, pkg := range database.Packages {
 		if strings.Contains(pkg.Name, package_name) {
 			fmt.Println(pkg.Name, pkg.Description, pkg.Versions)
+			nb_result++
 		}
 	}
+	fmt.Println("--> Found", nb_result, "available packages")
 }
 
 func SearchCommand(package_name string) {
