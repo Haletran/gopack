@@ -20,7 +20,7 @@ type Index struct {
 	Packages []Package
 }
 
-var DATABASE_PATH string = "packages/database.json"
+var DATABASE_PATH string = "../packages/database.json"
 
 func getdatabase() Index {
 	data, err := os.ReadFile(DATABASE_PATH)
