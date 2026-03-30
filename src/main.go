@@ -14,8 +14,10 @@ func command_parser(command_args []string) {
 	}
 	switch command_args[1] {
 	case "install":
+		isRoot() // might need to check later if rootless install
 		InstallCommand(command_args[2])
 	case "uninstall":
+		isRoot()
 		UninstallCommand(command_args[2])
 	case "search":
 		SearchCommand(command_args[2])

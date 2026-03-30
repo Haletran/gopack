@@ -8,8 +8,19 @@ import (
 	"log"
 	"net/http"
 	"os"
+	"os/user"
 	"strings"
 )
+
+func isRoot() bool {
+	currentUser, _ := user.Current()
+	if currentUser.Username != "root" {
+		fmt.Println("Need superuser privileges")
+		os.Exit(1)
+		return false
+	}
+	return true
+}
 
 func ChangePermisions(source string, perms os.FileMode) {
 	fileInfo, err := os.Stat(source)

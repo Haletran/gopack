@@ -12,6 +12,7 @@ Package Manager made in Go
 - [ ] Rootless install (use install path from global var instead of typing one in the lua script)
 - [ ] Online Database of the packages
 - [ ] Keep track of installed packages
+- [ ] Add database change like you can add multiple sources like a real pm
 
 ### Source
 
