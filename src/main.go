@@ -16,7 +16,7 @@ func command_parser(command_args []string) {
 	case "install":
 		InstallCommand(command_args[2])
 	case "uninstall":
-		fmt.Println("Uninstalling", command_args[2])
+		UninstallCommand(command_args[2])
 	case "search":
 		SearchCommand(command_args[2])
 	default:

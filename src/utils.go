@@ -11,6 +11,20 @@ import (
 	"strings"
 )
 
+func ChangePermisions(source string, perms os.FileMode) {
+	fileInfo, err := os.Stat(source)
+	if err != nil {
+		log.Fatal(err)
+	}
+	//fmt.Printf("File permissions: %#o\n", fileInfo.Mode().Perm())
+	if fileInfo.Mode().Perm() != perms {
+		err := os.Chmod(source, perms)
+		if err != nil {
+			log.Fatal(err)
+		}
+	}
+}
+
 func verifyChecksum(filePath string, expected string) error {
 	expected = strings.TrimPrefix(expected, "sha256:")
 	f, err := os.Open(filePath)

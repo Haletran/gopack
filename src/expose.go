@@ -14,6 +14,7 @@ import (
 var PACKAGES_PATH string = "../packages"
 
 func findLuaFile(package_name string) string {
+	// TODO: do that online not in a file for update this doesnt make any sense
 	return fmt.Sprintf("%s/%s/%s.lua", PACKAGES_PATH, package_name, package_name)
 }
 
@@ -51,11 +52,12 @@ func Extract(source string, destination string) {
 }
 
 func Install(source string, destination string) {
+	ChangePermisions(source, 0755)
 	// TODO: might need to make a much better solution than this shit
 	cmd := exec.Command("mv", source, destination)
-	err := cmd.Run()
-	if err != nil {
-		log.Fatal(err)
+	err2 := cmd.Run()
+	if err2 != nil {
+		log.Fatal(err2)
 	}
 	fmt.Printf("Sucessfully installed")
 	os.Remove(source)
